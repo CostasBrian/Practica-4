@@ -31,27 +31,59 @@ class ProgramaPrincipal:
                 motivo = int(input("por favor ingrese motivo de la visita:\n1_Baño\n2_Baño y Corte\n"))
                 nuevo_perro = Perro(nombre_perro, dueño, domicilio, telefono, motivo)
                 nuevo_perro.cargar_perro()     #el perro ingresado utiliza el metodo de carga de datos
+                print("Perro cargado exitosamente")
                 self.menu()
                 
                 
             if opcion == 2:
-                accion = classBusqueda()     #creo objeto accion de clase busqueda  #es necesario??
-                perro_buscado = input("ingrese nombre de perro a buscar:  ")
-                campo_a_modificar = int(input("que desea modificar?:\n1_domicilio\n2_telefono\n3_ambos\n"))
-                accion.buscarPerro(perro_buscado, campo_a_modificar)    #ejecuto metodo de instancia buscarPerro
+                buscado = input("ingrese nombre de perro a buscar:  ")
+                opc = int(input("que desea modificar?:\n1_domicilio\n2_telefono\n3_ambos\n"))
+                if opc == 1:
+                    new_domicilio = input("ingrese nuevo domicilio:  ")
+                    buscar = Conexiones()
+                    buscar.abrirConexion()
+                    buscar.miCursor.execute("UPDATE PERROS SET DOMICILIO= ? WHERE NOMBRE_PERRO = ?", (new_domicilio, buscado))
+                    buscar.miConexion.commit()
+                    buscar.cerrarConexion()
+                elif opc == 2:
+                    new_telefono = int(input("ingrese nuevo telefono:  "))
+                    buscar = Conexiones()
+                    buscar.abrirConexion()
+                    buscar.miCursor.execute("UPDATE PERROS SET TELEFONO = ? WHERE NOMBRE_PERRO = ?", (new_telefono, buscado))
+                    buscar.miConexion.commit()
+                    buscar.cerrarConexion()
+                else:
+                    new_domicilio = input("ingrese nuevo domicilio:  ")
+                    new_telefono = int(input("ingrese nuevo telefono:  "))
+                    buscar = Conexiones()
+                    buscar.abrirConexion()
+                    #buscar.miCursor.execute("SELECT * FROM PERROS WHERE NOBRE_PERRO = ?", (buscado,))
+                    buscar.miCursor.execute("UPDATE PERROS SET DOMICILIO= ?, TELEFONO = ? WHERE NOMBRE_PERRO = ?", (new_domicilio, new_telefono, buscado))
+                    buscar.miConexion.commit()
+                    buscar.cerrarConexion()
+                print("Datos modificados correctamente")
                 self.menu()
                 
             if opcion == 3:
-                accion = classEliminar()
                 eliminar = input("ingrese nombre de perro a eliminar:  ")
-                accion.eliminarPerro(eliminar)
+                eliminado = Conexiones()
+                eliminado.abrirConexion()
+                eliminado.miCursor.execute("DELETE FROM PERROS WHERE NOMBRE_PERRO = ?", (eliminar,))
+                eliminado.miConexion.commit()
+                eliminado.cerrarConexion()     
+                print("Datos eliminados correctamente")
                 self.menu()
-                        
                 
             if opcion == 5:
-                accion = classMostrar()
-                accion.mostrarLista()
+                mostrar = Conexiones()
+                mostrar.abrirConexion()
+                mostrar.miCursor.execute("SELECT * FROM PERROS")
+                lista = mostrar.miCursor.fetchall()
+                print(lista)
+                mostrar.miConexion.commit()
+                mostrar.cerrarConexion()     
                 self.menu()
+           
             break
         
 """-------------------------------------------------------------------------------------------------------------------------"""
@@ -69,7 +101,7 @@ class Perro:
         conexion.miCursor.execute("INSERT INTO PERROS VALUES(NULL, '{}', '{}', '{}', '{}', '{}')".format(self.nombre_perro, self.dueño, self.domicilio, self.telefono, self.motivo))
         conexion.miConexion.commit()
         conexion.cerrarConexion()
-        print("Perro cargado exitosamente")
+    
 """-------------------------------------------------------------------------------------------------------------------------"""
 
     
@@ -84,60 +116,7 @@ class Conexiones:
 
 
 """-------------------------------------------------------------------------------------------------------------------------"""
-class classBusqueda():
-    
-    def buscarPerro(self, buscado, opc): 
-        if opc == 1:
-            new_domicilio = input("ingrese nuevo domicilio:  ")
-            buscar = Conexiones()
-            buscar.abrirConexion()
-            buscar.miCursor.execute("UPDATE PERROS SET DOMICILIO= ? WHERE NOMBRE_PERRO = ?", (new_domicilio, buscado))
-            buscar.miConexion.commit()
-            buscar.cerrarConexion()
-        elif opc == 2:
-            new_telefono = int(input("ingrese nuevo telefono:  "))
-            buscar = Conexiones()
-            buscar.abrirConexion()
-            buscar.miCursor.execute("UPDATE PERROS SET TELEFONO = ? WHERE NOMBRE_PERRO = ?", (new_telefono, buscado))
-            buscar.miConexion.commit()
-            buscar.cerrarConexion()
-        else:
-            new_domicilio = input("ingrese nuevo domicilio:  ")
-            new_telefono = int(input("ingrese nuevo telefono:  "))
-            buscar = Conexiones()
-            buscar.abrirConexion()
-            buscar.miCursor.execute("UPDATE PERROS SET DOMICILIO= ?, TELEFONO = ? WHERE NOMBRE_PERRO = ?", (new_domicilio, new_telefono, buscado))
-            buscar.miConexion.commit()
-            buscar.cerrarConexion()
-        print("Datos modificados correctamente")
-
-"""-------------------------------------------------------------------------------------------------------------------------"""
-
-class classEliminar():
-    def eliminarPerro(self, eliminar):
-        eliminado = Conexiones()
-        eliminado.abrirConexion()
-        eliminado.miCursor.execute("DELETE FROM PERROS WHERE NOMBRE_PERRO = ?", (eliminar,))
-        eliminado.miConexion.commit()
-        eliminado.cerrarConexion()     
-        print("Datos eliminados correctamente")
- 
-"""-------------------------------------------------------------------------------------------------------------------------"""
-
-class classMostrar():
-    def mostrarLista(self):
-        mostrar = Conexiones()
-        mostrar.abrirConexion()
-        mostrar.miCursor.execute("SELECT * FROM PERROS")
-        lista = mostrar.miCursor.fetchall()
-        print(lista)
-        mostrar.miConexion.commit()
-        mostrar.cerrarConexion() 
-       
-"""-------------------------------------------------------------------------------------------------------------------------"""
-     
+            
 programa = ProgramaPrincipal()  #se crea objeto programa de clase prograam principal
 programa.menu()    #el objeto menu utiliza el metodo menu para volver a llamar
 
-"""-------------------------------------------------------------------------------------------------------------------------"""
-'''______________________________________________Programa Terminado_________________________________________________________'''
