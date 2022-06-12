@@ -2,11 +2,12 @@ import tkinter as tk
 from tkinter import *
 import sqlite3
 
+
 """-------------------------------------------------------------------------------------------------------------------------"""
 '''creo la base de datos'''
 miConexion = sqlite3.connect("Peluqueria")
 miCursor = miConexion.cursor()
-miCursor.execute("CREATE TABLE IF NOT EXISTS PERROS(ID INTEGER PRIMARY KEY AUTOINCREMENT, NOMBRE_PERRO VARCHAR(30) UNIQUE, DUEÑO VARCHAR(30), DOMICILIO VARCHAR (30), TELEFONO INTEGER(15), MOTIVO_DE_VISITA INTEGER(3))")
+miCursor.execute("CREATE TABLE IF NOT EXISTS PERROS(ID INTEGER PRIMARY KEY AUTOINCREMENT, NOMBRE_PERRO VARCHAR(30), DUEÑO VARCHAR(30), DOMICILIO VARCHAR (30), TELEFONO INTEGER(15), MOTIVO_DE_VISITA INTEGER(3))")
 miConexion.commit()
 miConexion.close()
 
@@ -22,7 +23,7 @@ raiz.config(bg="black")
 def ventana_carga():
     vent_carga= Toplevel()
     vent_carga.title("Carga de Perros")
-    vent_carga.geometry("550x700+70+0")
+    vent_carga.geometry("550x350+70+0")
     
     label = Label(vent_carga, text="Nombre del perro: ")
     label.grid(row=0, column=0)
@@ -58,7 +59,7 @@ def ventana_carga():
     
     nuevo_perro = Perro(dato1, dato2, dato3, dato4, dato5)
     
-    boton_guardar = Button(vent_carga, text="Guardar", width=25, command = cargar_perro)
+    boton_guardar = Button(vent_carga, text="Guardar", width=25, command = nuevo_perro.cargar_perro)
     boton_guardar.grid(row=7, column=1)
          
 
@@ -106,6 +107,7 @@ class Perro:
         self.telefono = telefono
         self.motivo = motivo
         
+    #@staticmethod
     def cargar_perro(self):
         conexion = Conexiones() # se crea objeto conexion de clse conexiones
         conexion.abrirConexion()    # objeto conexion utiliza los metodos de la clase conexiones
@@ -113,6 +115,7 @@ class Perro:
         conexion.miConexion.commit()
         conexion.cerrarConexion()
         print("Perro cargado exitosamente")
+        
 
 
 """-------------------------------------------------------------------------------------------------------------------------"""
