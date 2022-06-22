@@ -3,7 +3,7 @@ import sqlite3
 
 miConexion = sqlite3.connect("Peluqueria")
 miCursor = miConexion.cursor()
-miCursor.execute("CREATE TABLE IF NOT EXISTS PERROS(ID INTEGER PRIMARY KEY AUTOINCREMENT, NOMBRE_PERRO VARCHAR(30) UNIQUE, DUEÑO VARCHAR(30), DOMICILIO VARCHAR (30), TELEFONO INTEGER(15), MOTIVO_DE_VISITA INTEGER(3))")
+miCursor.execute("CREATE TABLE IF NOT EXISTS PERROS(ID INTEGER PRIMARY KEY AUTOINCREMENT, NOMBRE_PERRO VARCHAR(30) UNIQUE, DUEÑO VARCHAR(30), DOMICILIO VARCHAR (30), TELEFONO INTEGER(15), MOTIVO_BAÑO INTEGER(3), MOTIVO_BAÑOyCORTE INTEGER(3))")
 miConexion.commit()
 miConexion.close()
 
@@ -26,8 +26,9 @@ class ProgramaPrincipal:
                 dueño = input("Por favor ingrese el nombre del dueño: ")
                 domicilio = input("Por favor ingrese el domicilio: ")
                 telefono = int(input("Por favor ingrese un telefono: "))
-                motivo = int(input("por favor ingrese motivo de la visita:\n1_Baño\n2_Baño y Corte\n"))
-                nuevo_perro = Perro(nombre_perro, dueño, domicilio, telefono, motivo)
+                motivo1 = 0
+                motivo2 = 0
+                nuevo_perro = Perro(nombre_perro, dueño, domicilio, telefono, motivo1, motivo2)
                 nuevo_perro.cargar_perro()     #el perro ingresado utiliza el metodo de carga de datos
                 self.menu()
                 
@@ -45,6 +46,12 @@ class ProgramaPrincipal:
                 accion.eliminarPerro(eliminar)
                 self.menu()
                         
+            if opcion == 4:
+                accion = motivoVisita()
+                nombre = input("ingrese nombre de perro\n")
+                visita = int(input("por favor ingrese motivo de la visita:\n1_Baño\n2_Baño y Corte\n"))
+                accion.modificarVisita(nombre, visita)
+                self.menu
                 
             if opcion == 5:
                 accion = classMostrar()
@@ -54,23 +61,24 @@ class ProgramaPrincipal:
         
 """-------------------------------------------------------------------------------------------------------------------------"""
 class Perro:
-    def __init__(self, nombre_perro, dueño, domicilio, telefono, motivo):
+    def __init__(self, nombre_perro, dueño, domicilio, telefono, motivo1, motivo2):
         self.nombre_perro = nombre_perro
         self.dueño = dueño
         self.domicilio = domicilio
         self.telefono = telefono
-        self.motivo = motivo
+        self.motivo1 = motivo1
+        self.motivo2 = motivo2
         
     def cargar_perro(self):
         conexion = Conexiones() # se crea objeto conexion de clse conexiones
         conexion.abrirConexion()    # objeto conexion utiliza los metodos de la clase conexiones
-        conexion.miCursor.execute("INSERT INTO PERROS VALUES(NULL, '{}', '{}', '{}', '{}', '{}')".format(self.nombre_perro, self.dueño, self.domicilio, self.telefono, self.motivo))
+        conexion.miCursor.execute("INSERT INTO PERROS VALUES(NULL, '{}', '{}', '{}', '{}', '{}', '{}')".format(self.nombre_perro, self.dueño, self.domicilio, self.telefono, self.motivo1, self.motivo2))
         conexion.miConexion.commit()
         conexion.cerrarConexion()
         print("Perro cargado exitosamente")
         
     def __str__(self):
-        return ("\n + {} \n {}, \n {}, \n {}, \n {}".format("sfdfsdf", self.dueño, self.domicilio, self.telefono, self.motivo))
+        return ("\n + {} \n {}, \n {}, \n {}, \n {}, \n {}".format("sfdfsdf", self.dueño, self.domicilio, self.telefono, self.motivo1, self.motivo2))
         
     
 """-------------------------------------------------------------------------------------------------------------------------"""
@@ -125,6 +133,18 @@ class classEliminar():
         eliminado.cerrarConexion()     
         print("Datos eliminados correctamente")
  
+"""-------------------------------------------------------------------------------------------------------------------------"""
+class motivoVisita():
+    def modificarVisita(self, nombre, motivo):
+        visita = Conexiones()
+        visita.abrirConexion()
+        if motivo == 1:
+            visita.miCursor.execute("UPDATE PERROS SET MOTIVO_BAÑO= 1 WHERE NOMBRE_PERRO = ?", (nombre))
+        else:
+            visita.miCursor.execute("UPDATE PERROS SET MOTIVO_BAÑOyCORTE = 1 WHERE NOMBRE_PERRO = ?", (nombre))
+        visita.miConexion.commit()
+        visita.cerrarConexion()
+        print("visita ingresada correctamente")
 """-------------------------------------------------------------------------------------------------------------------------"""
 
 class classMostrar():
